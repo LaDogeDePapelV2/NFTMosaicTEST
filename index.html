@@ -1,0 +1,652 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> 
+    <title>La Doge De Papel NFT Canvas</title>
+    <link rel="stylesheet" href="app/leaflet.css" />
+    <link rel="stylesheet" href="app/Control.FullScreen.css" />
+    <link rel="stylesheet" href="app/easy-button.css" />
+    <link rel="stylesheet" href="app/help-table.css" />
+    <link rel="stylesheet" href="app/leaflet-search.css" />
+    <style type="text/css">
+        html, body, #AndreaMosaic {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="AndreaMosaic"></div>
+    <script src="app/leaflet.js"></script>
+    <script src="app/leafletzoom.js"></script>  
+    <script src="app/Control.FullScreen.js"></script>  
+    <script src="app/easy-button.js"></script>  
+    <script src="app/leaflet-search.js"></script>
+    <script type="application/javascript">
+        // TileArrays is an array of the tiles. It is needed for getPopUpText, getHelpText, getSearchText. Can be null.
+        // Each tileArray item has mandatory the first 4 elements defined as x,y,width,height in pixels of the tile position.
+        // Other elements in the array are optional and custom defined. See getTileObject.
+        // For mosaics with many tiles this array should have as few elements as possible or even not defined at all.
+        // With a very large amount of tiles it is suggested to store this list on the server and retrieve the tile 
+        // on demand in getTileObject.
+        var tileArrays = [
+			// tileX, tileY, tileWidth, tileHeight, tileNr, imageNr, imageUsageCount, imageUrl, imageName, imageExtension
+			[0,0,130,130,186,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[0,1040,130,130,267,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[0,1170,130,130,55,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[0,130,130,130,77,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[0,1300,130,130,327,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[0,1430,130,130,15,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[0,1560,130,130,59,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[0,1690,130,130,329,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[0,1820,130,130,299,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[0,1950,130,130,170,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[0,2080,130,130,63,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[0,2210,130,130,276,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[0,2340,130,130,388,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[0,2470,130,130,247,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[0,260,130,130,3,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[0,2600,130,127,343,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[0,2727,130,127,109,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[0,390,130,130,156,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[0,520,130,130,82,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[0,650,130,130,293,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[0,780,130,130,11,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[0,910,130,130,89,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1040,0,130,130,39,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1040,1040,130,130,412,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1040,1170,130,130,448,26,3,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (4).jpg","LDDP-6-NFT - Copy (4)","jpg"],
+			[1040,130,130,130,128,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1040,1300,130,130,121,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1040,1430,130,130,464,30,6,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy.jpg","LDDP-3-NFT - Copy","jpg"],
+			[1040,1560,130,130,414,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1040,1690,130,130,36,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1040,1820,130,130,466,30,6,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy.jpg","LDDP-3-NFT - Copy","jpg"],
+			[1040,1950,130,130,416,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1040,2080,130,130,440,24,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (6).jpg","LDDP-6-NFT - Copy (6)","jpg"],
+			[1040,2210,130,130,456,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[1040,2340,130,130,104,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1040,2470,130,130,373,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[1040,260,130,130,154,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1040,2600,130,127,215,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[1040,2727,130,127,182,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1040,390,130,130,226,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1040,520,130,130,427,22,1,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT - Copy (6).jpg","LDDP-5-NFT - Copy (6)","jpg"],
+			[1040,650,130,130,160,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1040,780,130,130,113,5,5,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT.jpg","LDDP-5-NFT","jpg"],
+			[1040,910,130,130,429,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[1170,0,130,130,1,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1170,1040,130,130,457,28,4,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (2).jpg","LDDP-3-NFT - Copy (2)","jpg"],
+			[1170,1170,130,130,468,31,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (4).jpg","LDDP-3-NFT - Copy (4)","jpg"],
+			[1170,130,130,130,311,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1170,1300,130,130,34,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1170,1430,130,130,438,24,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (6).jpg","LDDP-6-NFT - Copy (6)","jpg"],
+			[1170,1560,130,130,476,32,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (5).jpg","LDDP-3-NFT - Copy (5)","jpg"],
+			[1170,1690,130,130,123,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1170,1820,130,130,454,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[1170,1950,130,130,408,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1170,2080,130,130,126,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1170,2210,130,130,38,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1170,2340,130,130,245,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1170,2470,130,130,282,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[1170,260,130,130,192,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[1170,2600,130,127,28,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1170,2727,130,127,344,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1170,390,130,130,46,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1170,520,130,130,317,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1170,650,130,130,118,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1170,780,130,130,31,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1170,910,130,130,450,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[130,0,130,130,150,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[130,1040,130,130,163,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[130,1170,130,130,396,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[130,130,130,130,286,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[130,1300,130,130,461,29,1,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy.jpg","LDDP-2-NFT - Copy","jpg"],
+			[130,1430,130,130,95,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[130,1560,130,130,203,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[130,1690,130,130,238,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[130,1820,130,130,98,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[130,1950,130,130,142,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[130,2080,130,130,21,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[130,2210,130,130,336,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[130,2340,130,130,212,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[130,2470,130,130,306,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[130,260,130,130,349,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[130,2600,130,127,70,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[130,2727,130,127,180,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[130,390,130,130,225,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[130,520,130,130,260,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[130,650,130,130,50,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[130,780,130,130,231,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[130,910,130,130,137,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1300,0,130,130,221,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1300,1040,130,130,483,34,2,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (3).jpg","LDDP-3-NFT - Copy (3)","jpg"],
+			[1300,1170,130,130,114,5,5,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT.jpg","LDDP-5-NFT","jpg"],
+			[1300,130,130,130,287,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[1300,1300,130,130,405,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1300,1430,130,130,422,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1300,1560,130,130,470,31,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (4).jpg","LDDP-3-NFT - Copy (4)","jpg"],
+			[1300,1690,130,130,481,33,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (7).jpg","LDDP-3-NFT - Copy (7)","jpg"],
+			[1300,1820,130,130,424,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1300,1950,130,130,446,25,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy.jpg","LDDP-6-NFT - Copy","jpg"],
+			[1300,2080,130,130,434,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[1300,2210,130,130,426,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1300,2340,130,130,338,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1300,2470,130,130,68,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1300,260,130,130,257,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[1300,2600,130,127,148,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1300,2727,130,127,111,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1300,390,130,130,353,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[1300,520,130,130,7,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1300,650,130,130,410,19,1,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT - Copy.jpg","LDDP-5-NFT - Copy","jpg"],
+			[1300,780,130,130,419,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1300,910,130,130,402,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1430,0,130,130,40,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1430,1040,130,130,120,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1430,1170,130,130,463,30,6,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy.jpg","LDDP-3-NFT - Copy","jpg"],
+			[1430,130,130,130,129,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1430,1300,130,130,479,33,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (7).jpg","LDDP-3-NFT - Copy (7)","jpg"],
+			[1430,1430,130,130,458,28,4,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (2).jpg","LDDP-3-NFT - Copy (2)","jpg"],
+			[1430,1560,130,130,484,34,2,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (3).jpg","LDDP-3-NFT - Copy (3)","jpg"],
+			[1430,1690,130,130,433,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[1430,1820,130,130,460,28,4,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (2).jpg","LDDP-3-NFT - Copy (2)","jpg"],
+			[1430,1950,130,130,417,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1430,2080,130,130,467,30,6,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy.jpg","LDDP-3-NFT - Copy","jpg"],
+			[1430,2210,130,130,210,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[1430,2340,130,130,105,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1430,2470,130,130,179,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1430,260,130,130,81,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1430,2600,130,127,391,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[1430,2727,130,127,308,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[1430,390,130,130,227,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1430,520,130,130,159,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1430,650,130,130,87,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1430,780,130,130,436,24,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (6).jpg","LDDP-6-NFT - Copy (6)","jpg"],
+			[1430,910,130,130,473,32,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (5).jpg","LDDP-3-NFT - Copy (5)","jpg"],
+			[1560,0,130,130,187,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[1560,1040,130,130,32,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1560,1170,130,130,442,25,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy.jpg","LDDP-6-NFT - Copy","jpg"],
+			[1560,130,130,130,153,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1560,1300,130,130,475,32,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (5).jpg","LDDP-3-NFT - Copy (5)","jpg"],
+			[1560,1430,130,130,449,26,3,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (4).jpg","LDDP-6-NFT - Copy (4)","jpg"],
+			[1560,1560,130,130,445,25,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy.jpg","LDDP-6-NFT - Copy","jpg"],
+			[1560,1690,130,130,477,32,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (5).jpg","LDDP-3-NFT - Copy (5)","jpg"],
+			[1560,1820,130,130,124,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1560,1950,130,130,472,31,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (4).jpg","LDDP-3-NFT - Copy (4)","jpg"],
+			[1560,2080,130,130,409,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1560,2210,130,130,386,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[1560,2340,130,130,280,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[1560,2470,130,130,249,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1560,260,130,130,313,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1560,2600,130,127,216,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[1560,2727,130,127,345,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1560,390,130,130,47,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1560,520,130,130,195,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[1560,650,130,130,319,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1560,780,130,130,428,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[1560,910,130,130,411,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1690,0,130,130,376,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[1690,1040,130,130,447,26,3,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (4).jpg","LDDP-6-NFT - Copy (4)","jpg"],
+			[1690,1170,130,130,430,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[1690,130,130,130,348,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[1690,1300,130,130,469,31,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (4).jpg","LDDP-3-NFT - Copy (4)","jpg"],
+			[1690,1430,130,130,452,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[1690,1560,130,130,35,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1690,1690,130,130,465,30,6,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy.jpg","LDDP-3-NFT - Copy","jpg"],
+			[1690,1820,130,130,455,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[1690,1950,130,130,37,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[1690,2080,130,130,368,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[1690,2210,130,130,66,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1690,2340,130,130,305,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[1690,2470,130,130,374,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[1690,260,130,130,288,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[1690,2600,130,127,72,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1690,2727,130,127,112,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1690,390,130,130,258,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[1690,520,130,130,354,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[1690,650,130,130,294,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[1690,780,130,130,441,25,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy.jpg","LDDP-6-NFT - Copy","jpg"],
+			[1690,910,130,130,403,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1820,0,130,130,41,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1820,1040,130,130,437,24,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (6).jpg","LDDP-6-NFT - Copy (6)","jpg"],
+			[1820,1170,130,130,115,5,5,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT.jpg","LDDP-5-NFT","jpg"],
+			[1820,130,130,130,78,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1820,1300,130,130,421,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1820,1430,130,130,122,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1820,1560,130,130,415,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1820,1690,130,130,439,24,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (6).jpg","LDDP-6-NFT - Copy (6)","jpg"],
+			[1820,1820,130,130,425,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1820,1950,130,130,418,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1820,2080,130,130,243,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1820,2210,130,130,23,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1820,2340,130,130,339,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1820,2470,130,130,146,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1820,260,130,130,4,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1820,2600,130,127,392,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[1820,2727,130,127,183,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1820,390,130,130,132,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1820,520,130,130,84,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1820,650,130,130,435,24,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (6).jpg","LDDP-6-NFT - Copy (6)","jpg"],
+			[1820,780,130,130,119,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1820,910,130,130,420,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[1950,0,130,130,254,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[1950,1040,130,130,164,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1950,1170,130,130,413,20,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (5).jpg","LDDP-6-NFT - Copy (5)","jpg"],
+			[1950,130,130,130,222,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1950,1300,130,130,406,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1950,1430,130,130,444,25,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy.jpg","LDDP-6-NFT - Copy","jpg"],
+			[1950,1560,130,130,432,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[1950,1690,130,130,407,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[1950,1820,130,130,125,6,9,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT.jpg","LDDP-6-NFT","jpg"],
+			[1950,1950,130,130,117,5,5,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT.jpg","LDDP-5-NFT","jpg"],
+			[1950,2080,130,130,101,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[1950,2210,130,130,277,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[1950,2340,130,130,177,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[1950,2470,130,130,250,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[1950,260,130,130,314,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[1950,2600,130,127,29,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1950,2727,130,127,399,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[1950,390,130,130,379,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[1950,520,130,130,48,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[1950,650,130,130,9,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[1950,780,130,130,135,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[1950,910,130,130,323,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2080,0,130,130,127,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2080,1040,130,130,233,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2080,1170,130,130,56,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2080,130,130,130,190,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2080,1300,130,130,93,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2080,1430,130,130,202,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2080,1560,130,130,272,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2080,1690,130,130,60,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2080,1820,130,130,206,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2080,1950,130,130,173,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2080,2080,130,130,369,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2080,2210,130,130,211,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2080,2340,130,130,67,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2080,2470,130,130,106,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2080,260,130,130,352,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2080,2600,130,127,217,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2080,2727,130,127,346,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2080,390,130,130,292,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2080,520,130,130,229,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2080,650,130,130,161,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2080,780,130,130,263,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2080,910,130,130,358,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2210,0,130,130,76,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2210,1040,130,130,296,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2210,1170,130,130,268,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2210,130,130,130,44,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2210,1300,130,130,383,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[2210,1430,130,130,16,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2210,1560,130,130,328,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2210,1690,130,130,298,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2210,1820,130,130,19,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2210,1950,130,130,333,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2210,2080,130,130,302,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2210,2210,130,130,24,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2210,2340,130,130,340,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2210,2470,130,130,307,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2210,260,130,130,155,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2210,2600,130,127,283,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2210,2727,130,127,184,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2210,390,130,130,259,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2210,520,130,130,85,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2210,650,130,130,395,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[2210,780,130,130,197,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2210,910,130,130,90,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2340,0,130,130,255,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2340,1040,130,130,13,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2340,1170,130,130,138,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2340,130,130,130,223,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2340,1300,130,130,362,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2340,1430,130,130,237,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2340,1560,130,130,169,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2340,1690,130,130,97,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2340,1820,130,130,141,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2340,1950,130,130,241,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2340,2080,130,130,102,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2340,2210,130,130,278,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2340,2340,130,130,389,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[2340,2470,130,130,375,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2340,260,130,130,5,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2340,2600,130,127,398,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[2340,2727,130,127,74,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2340,390,130,130,133,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2340,520,130,130,318,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2340,650,130,130,380,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[2340,780,130,130,53,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2340,910,130,130,324,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2470,0,130,130,347,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2470,1040,130,130,234,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2470,1170,130,130,200,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2470,130,130,130,312,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2470,1300,130,130,94,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2470,1430,130,130,58,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2470,1560,130,130,204,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2470,1690,130,130,365,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2470,1820,130,130,274,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2470,1950,130,130,174,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2470,2080,130,130,370,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2470,2210,130,130,144,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2470,2340,130,130,246,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2470,2470,130,130,214,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2470,260,130,130,377,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[2470,2600,130,127,149,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2470,2727,130,127,30,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2470,390,130,130,400,17,2,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (6).jpg","LDDP-2-NFT - Copy (6)","jpg"],
+			[2470,520,130,130,355,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[2470,650,130,130,10,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2470,780,130,130,264,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2470,910,130,130,359,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[260,0,130,130,309,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[260,1040,130,130,360,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[260,1170,130,130,381,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[260,130,130,130,42,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[260,1300,130,130,235,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[260,1430,130,130,270,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[260,1560,130,130,168,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[260,1690,130,130,363,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[260,1820,130,130,273,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[260,1950,130,130,207,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[260,2080,130,130,242,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[260,2210,130,130,103,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[260,2340,130,130,175,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[260,2470,130,130,371,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[260,260,130,130,130,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[260,2600,130,127,147,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[260,2727,130,127,285,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[260,390,130,130,315,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[260,520,130,130,194,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[260,650,130,130,356,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[260,780,130,130,321,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[260,910,130,130,199,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2600,0,127,130,188,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2600,1040,127,130,165,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2600,1170,127,130,269,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2600,130,127,130,79,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2600,1300,127,130,384,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[2600,1430,127,130,297,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2600,1560,127,130,18,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2600,1690,127,130,331,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2600,1820,127,130,300,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2600,1950,127,130,20,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2600,2080,127,130,335,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2600,2210,127,130,303,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2600,2340,127,130,25,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2600,2470,127,130,342,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2600,260,127,130,289,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[2600,2600,127,127,284,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[2600,2727,127,127,185,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2600,390,127,130,193,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2600,520,127,130,86,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2600,650,127,130,230,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2600,780,127,130,198,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2600,910,127,130,91,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2727,0,127,130,151,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2727,1040,127,130,325,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2727,1170,127,130,14,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[2727,130,127,130,45,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2727,1300,127,130,139,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2727,1430,127,130,167,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2727,1560,127,130,397,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[2727,1690,127,130,240,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2727,1820,127,130,62,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2727,1950,127,130,99,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2727,2080,127,130,208,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[2727,2210,127,130,387,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[2727,2340,127,130,178,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2727,2470,127,130,69,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2727,260,127,130,224,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2727,2600,127,127,108,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[2727,2727,127,127,252,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[2727,390,127,130,157,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[2727,520,127,130,49,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[2727,650,127,130,320,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[2727,780,127,130,136,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[2727,910,127,130,54,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[390,0,130,130,253,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[390,1040,130,130,295,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[390,1170,130,130,326,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[390,130,130,130,189,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[390,1300,130,130,401,17,2,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (6).jpg","LDDP-2-NFT - Copy (6)","jpg"],
+			[390,1430,130,130,140,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[390,1560,130,130,17,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[390,1690,130,130,330,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[390,1820,130,130,385,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[390,1950,130,130,171,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[390,2080,130,130,366,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[390,2210,130,130,65,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[390,2340,130,130,279,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[390,2470,130,130,248,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[390,260,130,130,80,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[390,2600,130,127,26,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[390,2727,130,127,218,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[390,390,130,130,6,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[390,520,130,130,158,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[390,650,130,130,393,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[390,780,130,130,88,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[390,910,130,130,265,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[520,0,130,130,219,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[520,1040,130,130,12,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[520,1170,130,130,92,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[520,130,130,130,152,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[520,1300,130,130,201,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[520,1430,130,130,57,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[520,1560,130,130,96,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[520,1690,130,130,239,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[520,1820,130,130,61,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[520,1950,130,130,301,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[520,2080,130,130,334,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[520,2210,130,130,143,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[520,2340,130,130,213,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[520,2470,130,130,341,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[520,260,130,130,350,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[520,2600,130,127,107,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[520,2727,130,127,73,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[520,390,130,130,290,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[520,520,130,130,261,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[520,650,130,130,134,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[520,780,130,130,51,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[520,910,130,130,232,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[650,0,130,130,310,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[650,1040,130,130,361,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[650,1170,130,130,382,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[650,130,130,130,43,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[650,1300,130,130,236,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[650,1430,130,130,166,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[650,1560,130,130,271,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[650,1690,130,130,364,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[650,1820,130,130,205,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[650,1950,130,130,275,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[650,2080,130,130,100,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[650,2210,130,130,22,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[650,2340,130,130,304,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[650,2470,130,130,372,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[650,260,130,130,131,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[650,2600,130,127,390,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[650,2727,130,127,181,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[650,390,130,130,378,15,17,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (2).jpg","LDDP-2-NFT - Copy (2)","jpg"],
+			[650,520,130,130,228,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[650,650,130,130,357,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[650,780,130,130,322,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[650,910,130,130,162,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[780,0,130,130,75,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[780,1040,130,130,451,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[780,1170,130,130,33,2,8,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT.jpg","LDDP-3-NFT","jpg"],
+			[780,130,130,130,2,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[780,1300,130,130,404,18,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (3).jpg","LDDP-6-NFT - Copy (3)","jpg"],
+			[780,1430,130,130,480,33,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (7).jpg","LDDP-3-NFT - Copy (7)","jpg"],
+			[780,1560,130,130,453,27,7,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (6).jpg","LDDP-3-NFT - Copy (6)","jpg"],
+			[780,1690,130,130,459,28,4,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (2).jpg","LDDP-3-NFT - Copy (2)","jpg"],
+			[780,1820,130,130,116,5,5,"https://okancankeskin.com/LDDP/pics/LDDP-5-NFT.jpg","LDDP-5-NFT","jpg"],
+			[780,1950,130,130,172,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[780,2080,130,130,367,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[780,2210,130,130,244,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[780,2340,130,130,176,8,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (5).jpg","LDDP-1-NFT - Copy (5)","jpg"],
+			[780,2470,130,130,281,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[780,260,130,130,191,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[780,2600,130,127,27,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[780,2727,130,127,251,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[780,390,130,130,316,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[780,520,130,130,83,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[780,650,130,130,394,16,7,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (5).jpg","LDDP-2-NFT - Copy (5)","jpg"],
+			[780,780,130,130,196,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[780,910,130,130,266,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[910,0,130,130,220,10,34,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (3).jpg","LDDP-1-NFT - Copy (3)","jpg"],
+			[910,1040,130,130,478,33,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (7).jpg","LDDP-3-NFT - Copy (7)","jpg"],
+			[910,1170,130,130,474,32,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (5).jpg","LDDP-3-NFT - Copy (5)","jpg"],
+			[910,130,130,130,256,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[910,1300,130,130,431,23,7,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (2).jpg","LDDP-6-NFT - Copy (2)","jpg"],
+			[910,1430,130,130,443,25,6,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy.jpg","LDDP-6-NFT - Copy","jpg"],
+			[910,1560,130,130,423,21,8,"https://okancankeskin.com/LDDP/pics/LDDP-6-NFT - Copy (7).jpg","LDDP-6-NFT - Copy (7)","jpg"],
+			[910,1690,130,130,471,31,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (4).jpg","LDDP-3-NFT - Copy (4)","jpg"],
+			[910,1820,130,130,482,33,5,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy (7).jpg","LDDP-3-NFT - Copy (7)","jpg"],
+			[910,1950,130,130,332,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[910,2080,130,130,64,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[910,2210,130,130,209,9,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (6).jpg","LDDP-1-NFT - Copy (6)","jpg"],
+			[910,2340,130,130,337,13,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (7).jpg","LDDP-1-NFT - Copy (7)","jpg"],
+			[910,2470,130,130,145,7,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (3).jpg","LDDP-2-NFT - Copy (3)","jpg"],
+			[910,260,130,130,351,14,29,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (4).jpg","LDDP-1-NFT - Copy (4)","jpg"],
+			[910,2600,130,127,71,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[910,2727,130,127,110,4,38,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT.jpg","LDDP-1-NFT","jpg"],
+			[910,390,130,130,291,12,23,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT - Copy (4).jpg","LDDP-2-NFT - Copy (4)","jpg"],
+			[910,520,130,130,262,11,33,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy.jpg","LDDP-1-NFT - Copy","jpg"],
+			[910,650,130,130,8,1,30,"https://okancankeskin.com/LDDP/pics/LDDP-2-NFT.jpg","LDDP-2-NFT","jpg"],
+			[910,780,130,130,52,3,36,"https://okancankeskin.com/LDDP/pics/LDDP-1-NFT - Copy (2).jpg","LDDP-1-NFT - Copy (2)","jpg"],
+			[910,910,130,130,462,30,6,"https://okancankeskin.com/LDDP/pics/LDDP-3-NFT - Copy.jpg","LDDP-3-NFT - Copy","jpg"],
+		];
+
+        // Get the tile at the specified position x,y in pixels
+        var getTileObject = function (x,y) {
+            var l = tileArrays.length;
+            for (n=0; n<l; ++n) {
+                tileInfo = tileArrays[n];
+                if (tileInfo[0] <= x && tileInfo[0]+tileInfo[2] >= x && tileInfo[1] <= y && tileInfo[1]+tileInfo[3] >= y) {
+                    return { 
+                        tileLeft:tileInfo[0],
+                        tileTop:tileInfo[1],
+                        tileWidth:tileInfo[2],
+                        tileHeight:tileInfo[3],
+                        tileRight:tileInfo[0]+tileInfo[1],
+                        tileBottom:tileInfo[2]+tileInfo[3],
+                        tileNr:tileInfo[4],
+                        imageNr:tileInfo[5],
+                        imageUsageCount:tileInfo[6],
+                        imageUrl:tileInfo[7],
+                        imageName:tileInfo[8],
+                        imageExtension:tileInfo[9],
+                    };
+                }
+            }
+            return null; // not found
+        }
+
+        var showPopUpWindow = function(popUpText, callback) {
+            callback.showPopUp({maxWidth:300, popUpText:popUpText}, callback.args);
+        }
+
+        // This function builds the PopUp window information for the specified Tile. 
+        // Returns an object with following members:
+        //  maxWidth: maximum width of the popup window.
+        //  popUpText: HTML text to show in the popup window.
+        var getPopUpFullText = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null ? "No information available" :
+                        (tile.imageUrl == null? '' : '<a href="' + tile.imageUrl + '" target="TileImage"><img src="' + tile.imageUrl + '" width=300 /><br></a>')
+                        + 'NFT Position: ' + tile.tileLeft + ' x ' + tile.tileTop + '<br>'
+                        + 'NFT Number.: ' + tile.imageNr + '<br>'
+                        + 'NFT Name: ' + tile.imageName + '<br>';
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // PopUp showing only the image
+        var getPopUpImageOnly = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null || tile.imageUrl === null ? "No information available" : '<a href="' + tile.imageUrl + '" target="TileImage"><img src="' + tile.imageUrl + '" width=300 /><br></a>';
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // PopUp showing the image with name and usage count
+        var getPopUpImageWithName = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null || tile.imageUrl === null ? "No information available" : '<a href="' + tile.imageUrl + '" target="TileImage"><img src="' + tile.imageUrl + '" width=300 /><br></a>' 
+                + '<center>' + tile.imageName + ' (used ' + tile.imageUsageCount + ' times)</center>';
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // PopUp showing only ImageNr
+        var getPopUpTextOnly = function (x,y,callback) {
+            var tile = getTileObject(x,y);
+            popUpText = tile === null || tile.imageUrl === null ? "No information available" : '<center>image #' + tile.imageNr + ' used ' + tile.imageUsageCount + ' times</center>'; 
+            showPopUpWindow(popUpText,callback);
+        };
+
+        // Get the Help Text to show when clicking on the ? button
+        var getHelpText = function () {
+            return {
+                maxWidth: 500,
+                minWidth: 300,
+                popUpText:    '<table class="help-table"><thead><tr><th></th><th>Mouse</th><th>Touchscreen</th><th>Keyboard</th></tr></thead><tbody>' 
+                            + '<tr><td>Zoom In</td><td>Wheel or Doubleclick</td><td>Enlarge with two Fingers</td><td>+</td></tr><tr>'
+                            + '<tr><td>Zoom Out</td><td>Wheel or Shift + Doubleclick</td><td>Reduce with two Fingers</td><td>-</td></tr><tr>'
+                            + '<tr><td>Pan</td><td>Left Click + Move</td><td>Short Press + Move</td><td>Arrow Keys</td></tr><tr>'
+                            + '<tr><td>Show Info</td><td>Right Click</td><td>Long Press</td><td></td></tr><tr>'
+                            + '<tr><td>Hide Info</td><td>Left Click on map</td><td>Short Press on map</td><td>Esc</td></tr><tr>'
+                            + '<tr><td>Zoom area</td><td>Left Click + Shift + Move</td><td></td><td></td></tr><tr>'
+                            + '</tbody></table>',
+            }
+        }; 
+
+        // This function builds the search text.
+        // This function is invoked once when loading the mosaic.
+        // It returns an array with 3 elements: x,y,title.
+        // If two tiles have the same title then it will be displayed only once in the search list.
+        var getSearchText = function () {
+            var l = tileArrays.length;
+            var searchList = new Array(l);
+            for (n=0; n<l; ++n) {
+                tileInfo = tileArrays[n];
+                searchList[n] = [tileInfo[0]+tileInfo[2]/2, tileInfo[1]+tileInfo[3]/2, tileInfo[8]];
+            }
+            return searchList;
+        };
+
+        // Map Options
+        var mapOptions = {
+            getPopUpText: getPopUpFullText, // function that retrieves the HTML text to show for a tile. Can be null to avoid popup.
+            getHelpText: getHelpText, // function that retrieves the HTML text to show as PopUp for a help. (can be null to hide the ? button)
+            attribution: null, // set my own attribution text, as html text. Can be null to have no additional attribution.
+            keepPopUpInView: true, // if true the map will autopan so that the popup window is awlays shown.
+            fullscreenControl: !navigator.vendor.match(/apple/i),
+            getSearchText: getSearchText,    // function that retrieves the text of each tile that will be searched. Null to avoid search.
+            searchMiddleOfText: true, // false: search elements only by initial text
+            searchCaseInsensitive: true, // false: search elements in case sensitive text
+            searchAutocomplete: true, // complete input with first suggested result and select this filled-in text.
+            searchAutoHideMarker: true, // remove circle and marker on search control collapsed
+            searchMarkerFound: null, // specify a L.Icon or null for the default
+            searchText:'Tile...', // text for the Search
+            searchTextError:'Tile not found',    //error message
+            searchTextCancel: 'Cancel',          //title in cancel button        
+            searchTextPlaceholder: 'Search Tile...',   //placeholder value         
+            searchContainer: '', // container id to insert Search Control
+            zoomControl: true, // false to not show a zoom control with +/- buttons
+            panInertia: null, // can be null, true or false. Inertia feels nice on touchscreen devices
+            panInertiaDeceleration: null, // can be null or a value in pixels/second.
+        };
+
+        // Show the Mosaic
+        ShowAndreaMosaic(
+            'AndreaMosaic', // Div ID
+            'mosaic/', // Base URL of the Mosaic Tiles
+            2854, // Width in Pixels
+            2854, // Height in Pixels
+            mapOptions
+            );
+    </script>
+</body>
+</html>
